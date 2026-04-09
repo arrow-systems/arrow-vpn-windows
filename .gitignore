@@ -1,0 +1,58 @@
+# ========================
+# Node / Electron
+# ========================
+node_modules/
+dist/
+build/
+out/
+release/
+
+# ========================
+# Logs
+# ========================
+*.log
+xray_error.log
+xray_access.log
+singbox_error.log
+
+# ========================
+# Runtime / config local
+# ========================
+config.json
+arrow_credenciales.json
+.env
+
+# ========================
+# Scripts temporales
+# ========================
+*.ps1
+
+# ========================
+# Binaries / builds
+# ========================
+*.exe
+*.asar
+
+# ========================
+# OS junk
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# IDEs / editors
+# ========================
+.vscode/
+.idea/
+
+# ========================
+# Electron / updater
+# ========================
+latest.yml
+*.blockmap
+
+# ========================
+# Debug / temp
+# ========================
+*.tmp
+*.bak

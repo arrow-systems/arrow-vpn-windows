@@ -1,0 +1,73 @@
+{
+  "name": "arrow-vpn",
+  "version": "2.0.13",
+  "description": "Privacy-focused VPN client for Windows powered by sing-box",
+  "main": "main.js",
+  "type": "commonjs",
+  "author": "Arrow Systems",
+  "license": "MIT",
+  "homepage": "https://github.com/arrow-systems/arrow-vpn-windows",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrow-systems/arrow-vpn-windows.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arrow-systems/arrow-vpn-windows/issues"
+  },
+  "keywords": [
+    "vpn",
+    "privacy",
+    "windows",
+    "electron",
+    "sing-box",
+    "vless",
+    "reality",
+    "security",
+    "censorship-evasion",
+    "ipv6"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "dist": "electron-builder --win",
+    "pack": "electron-builder --dir"
+  },
+  "build": {
+    "appId": "com.arrowx.vpn",
+    "productName": "Arrow VPN",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://alemania.arrow-x.org:7777/descargas"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "icon.png",
+      "target": "nsis",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "runAfterFinish": true,
+      "shortcutName": "Arrow VPN",
+      "deleteAppDataOnUninstall": true
+    },
+    "asarUnpack": [
+      "bin/**/*"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^40.6.0",
+    "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "electron-store": "^6.0.1",
+    "electron-updater": "^6.8.3"
+  }
+}

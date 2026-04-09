@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow VPN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-wrapper">
+
+    <div class="title-bar">
+        <div class="title-bar-drag-area"></div>
+        <div class="window-controls">
+            <button class="win-btn" id="btn-minimizar">─</button>
+            <button class="win-btn close-btn" id="btn-cerrar">✕</button>
+        </div>
+    </div>
+
+    <div id="pantalla-login" class="pantalla-login">
+        <div class="login-box">
+            <h2>Arrow VPN</h2>
+            <p>Ingresa tus credenciales Stealth</p>
+            <input type="text" id="login-uuid" class="login-input" placeholder="ID de Usuario (UUID)" spellcheck="false">
+            <input type="password" id="login-pass" class="login-input" placeholder="Contraseña">
+            <div id="login-error" class="login-error-text"></div>
+            <button id="btn-login-submit" class="btn-login">Verificar Acceso</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <button class="icon-btn" id="btn-ayuda">?</button>
+        <h2>Arrow VPN</h2>
+        <button class="icon-btn" id="btn-ajustes">⚙</button>
+    </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" id="btn-modo-vpn">VPN</button>
+        <button class="mode-btn" id="btn-modo-proxy" title="Ideal para redes bloqueadas o Wi-Fi público estricto">PROXY</button>
+    </div>
+
+    <div class="status-text">Protección Inactiva</div>
+
+    <div class="btn-maestro-container">
+        <button class="btn-conectar" id="btn-conectar">
+            <div class="rayo">
+                <svg xmlns="http://www.w3.org/2000/svg" height="65px" viewBox="0 -960 960 960" width="65px" fill="currentColor">
+                    <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-84 31.5-156.5T197-763l56 56q-44 44-68.5 102T160-480q0 134 93 227t227 93q134 0 227-93t93-227q0-67-24.5-125T707-707l56-56q54 54 85.5 126.5T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-400v-400h80v400h-80Z"/>
+                </svg>
+            </div>
+            <span>CONECTAR</span>
+        </button>
+    </div>
+
+    <div class="server-menu" id="menu-servidores"></div>
+
+    <div class="bottom-container">
+        <div class="bottom-label">Ubicación Actual</div>
+        <button class="btn-servidor" id="btn-abrir-servidores">
+            <div class="server-info" id="info-servidor-actual">
+                Cargando Nodos...
+            </div>
+            <span>▼</span>
+        </button>
+    </div>
+
+    <div class="overlay" id="overlay-menus"></div>
+
+    <div class="panel-flotante" id="panel-soporte">
+        <h3 class="panel-title">Soporte Técnico</h3>
+        <div class="support-item" style="cursor: default;">
+            <span class="support-label">Versión de App</span>
+            <span class="support-value" id="app-version-text" style="color: #95a5a6;">Cargando...</span>
+        </div>
+        <div class="support-item" data-clipboard="05900ca5fcec8fe58b509961f5ed9c658a876c1308b9bfdd69e14effbd1ed13a0e">
+            <span class="support-label">ID de Sesión</span>
+            <span class="support-value" style="color: #7f8c8d;">05900ca5fcec8fe58b509961f5ed9c658a876c1308b9bfdd69e14effbd1ed13a0e</span>
+        </div>
+        <div class="support-item" data-clipboard="support@arrow-x.org">
+            <span class="support-label">Centro de Ayuda</span>
+            <span class="support-value" style="color: #3498db;">support@arrow-x.org</span>
+        </div>
+        <button class="panel-btn-cerrar" id="btn-cerrar-soporte">Cerrar</button>
+    </div>
+
+    <div class="panel-flotante" id="panel-cuenta">
+        <h3 class="panel-title">Ajustes</h3>
+
+        <button id="btn-abrir-credenciales" class="btn-credenciales">Mis Credenciales</button>
+
+        <button id="btn-cerrar-sesion" class="btn-logout">Cerrar Sesión</button>
+
+        <div class="setting-group" style="margin-bottom: 10px;">
+            <span class="setting-label-main">General</span>
+            <div class="toggle-row">
+                <span class="setting-label">Minimizar a la bandeja</span>
+                <label class="switch"><input type="checkbox" id="toggle-tray"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-row">
+                <span class="setting-label">Conexión automática</span>
+                <label class="switch"><input type="checkbox" id="toggle-auto"><span class="slider"></span></label>
+            </div>
+        </div>
+        <div class="setting-group" style="margin-bottom: 20px;">
+            <span class="setting-label-main">Seguridad Avanzada</span>
+            <div class="toggle-row">
+                <span class="setting-label" style="color: #ff7675;">Kill Switch (Bloqueo)</span>
+                <label class="switch"><input type="checkbox" id="toggle-killswitch"><span class="slider killswitch-slider"></span></label>
+            </div>
+        </div>
+        <div class="panel-botones">
+            <button class="panel-btn-cerrar" id="btn-cerrar-cuenta">Volver</button>
+        </div>
+    </div>
+
+    <div class="panel-flotante" id="panel-credenciales">
+        <h3 class="panel-title">Mis Credenciales</h3>
+        <p class="credenciales-subtitle">Haz clic para copiar al portapapeles</p>
+
+        <button id="btn-copiar-sub" class="btn-copiar-sub">Copiar Suscripción General</button>
+
+        <div class="setting-group credenciales-group">
+            <span class="setting-label-main">Nodos VLESS (Individual)</span>
+            <div id="lista-vless-nodos" class="vless-list-container">
+            </div>
+        </div>
+
+        <div class="panel-botones">
+            <button class="panel-btn-cerrar" id="btn-volver-ajustes">Volver a Ajustes</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast-notificacion">✓ Copiado al portapapeles</div>
+
+</div>
+<script>
+    let estaConectado = false;
+    let estaConectando = false;
+    let estaDesconectando = false;
+    let modoConexionActual = 'vpn';
+    let servidoresDisponibles = {};
+    let servidorSeleccionado = '';
+    let currentUserUuid = '';
+
+    let datosRadar = {};
+    let isPinging = false;
+    let radarInterval = null;
+
+    // VARIABLE AÑADIDA PARA CONTROLAR EL BUG DEL BOTÓN
+    let timeoutConexionId = null;
+
+    const pantallaLogin = document.getElementById('pantalla-login');
+    const inputUuid = document.getElementById('login-uuid');
+    const inputPass = document.getElementById('login-pass');
+    const btnLogin = document.getElementById('btn-login-submit');
+    const txtErrorLogin = document.getElementById('login-error');
+    const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+
+    const toggleTray = document.getElementById('toggle-tray');
+    const toggleAuto = document.getElementById('toggle-auto');
+    const toggleKillswitch = document.getElementById('toggle-killswitch');
+    const toast = document.getElementById('toast-notificacion');
+    const menuServidores = document.getElementById('menu-servidores');
+    const btnAbrirServidores = document.getElementById('btn-abrir-servidores');
+    const btnModoVpn = document.getElementById('btn-modo-vpn');
+    const btnModoProxy = document.getElementById('btn-modo-proxy');
+
+    function aplicarGuardado(mostrarAviso = true) {
+        window.apiVPN.enviar('save-settings', {
+            tray: toggleTray.checked,
+            autoConnect: toggleAuto.checked,
+            killSwitch: toggleKillswitch.checked,
+            connectionMode: modoConexionActual
+        });
+        if (mostrarAviso) mostrarMensaje("✓ Ajustes actualizados");
+    }
+
+    function actualizarModoVisual(modo, guardar = true) {
+        if (estaConectado || estaConectando) {
+            mostrarMensaje("⚠️ Desconéctate para cambiar de modo", true);
+            return;
+        }
+        modoConexionActual = modo;
+        if (modo === 'vpn') { btnModoVpn.classList.add('active'); btnModoProxy.classList.remove('active'); }
+        else { btnModoProxy.classList.add('active'); btnModoVpn.classList.remove('active'); }
+        if (guardar) aplicarGuardado(false);
+    }
+
+    btnModoVpn.addEventListener('click', () => actualizarModoVisual('vpn'));
+    btnModoProxy.addEventListener('click', () => actualizarModoVisual('proxy'));
+
+    function gestionarRadar(activar) {
+        if (activar) {
+            if (!radarInterval) {
+                console.log("📡 Radar Activado");
+                consultarRadar();
+                radarInterval = setInterval(consultarRadar, 10000);
+            }
+        } else {
+            if (radarInterval) {
+                console.log("💤 Radar Durmiendo");
+                clearInterval(radarInterval);
+                radarInterval = null;
+            }
+        }
+    }
+
+    function renderizarMenuServidores() {
+        const claseSpin = isPinging ? 'spin-anim' : '';
+
+        menuServidores.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; padding: 4px 5px 0 5px;">
+                <span style="font-size: 11px; color: #7f8c8d; font-weight: 600; text-transform: uppercase;">Latencia en vivo</span>
+                <button id="btn-recargar-ping" class="btn-recargar ${claseSpin}" title="Actualizar Pings">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#7f8c8d"><path d="M480-160q-133 0-226.5-93.5T160-480q0-133 93.5-226.5T480-800q85 0 149 34.5T740-671v-129h80v254H566v-80h130q-42-61-101.5-98T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q81 0 143-48t90-122h82q-32 108-115 179t-200 71Z"/></svg>
+                </button>
+            </div>
+        `;
+
+        let llavesActivas = Object.keys(servidoresDisponibles);
+        llavesActivas.sort((a, b) => servidoresDisponibles[a].nombre.localeCompare(servidoresDisponibles[b].nombre));
+
+        if (!servidorSeleccionado || !servidoresDisponibles[servidorSeleccionado]) {
+            servidorSeleccionado = llavesActivas.length > 0 ? llavesActivas[0] : null;
+        }
+
+        if (!servidorSeleccionado) return;
+
+        llavesActivas.forEach(idPais => {
+            const dataServidor = servidoresDisponibles[idPais];
+            const btn = document.createElement('button');
+            const telemetria = datosRadar[idPais] || { estado: "Consultando...", ping: 0 };
+
+            let claseColor = 'dot-mantenimiento';
+            let textoPing = telemetria.ping > 0 ? `${telemetria.ping} ms` : "Calculando...";
+            let estaDeshabilitado = false;
+
+            if (telemetria.ping > 0 && telemetria.ping <= 199) claseColor = 'dot-activo';
+            else if (telemetria.ping >= 200 && telemetria.ping <= 800) claseColor = 'dot-mantenimiento';
+            else if (telemetria.ping > 800 || telemetria.ping === -1 || ["Caído", "Error URL", "Timeout"].includes(telemetria.estado)) {
+                claseColor = 'dot-apagado';
+                textoPing = "Fuera de servicio";
+                estaDeshabilitado = true;
+            }
+
+            btn.className = `server-option ${estaDeshabilitado ? 'disabled' : ''}`;
+            btn.innerHTML = `
+                <div class="server-info">
+                    <img src="${dataServidor.bandera}" class="bandera" alt="${idPais}">
+                    <div style="display: flex; flex-direction: column; text-align: left; margin-left: 5px;">
+                        <span>${dataServidor.nombre}</span>
+                        <span style="font-size: 10px; color: ${estaDeshabilitado ? '#e74c3c' : '#7f8c8d'}; margin-top: 2px; font-weight: normal;">
+                            ${textoPing}
+                        </span>
+                    </div>
+                </div>
+                <div class="status-dot ${claseColor}" title="${telemetria.estado}"></div>
+            `;
+
+            if (!estaDeshabilitado) {
+                btn.addEventListener('click', () => {
+                    servidorSeleccionado = idPais;
+                    actualizarBotonServidorUI();
+                    menuServidores.classList.remove('abierto');
+                    gestionarRadar(false);
+                });
+            }
+            menuServidores.appendChild(btn);
+        });
+
+        document.getElementById('btn-recargar-ping').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPinging) return;
+            isPinging = true;
+            Object.keys(servidoresDisponibles).forEach(id => datosRadar[id] = { estado: "Calculando...", ping: 0 });
+            renderizarMenuServidores();
+            window.apiVPN.enviar('ping-servers', servidoresDisponibles);
+        });
+
+        actualizarBotonServidorUI();
+    }
+
+    function actualizarBotonServidorUI() {
+        if (!servidorSeleccionado || !servidoresDisponibles[servidorSeleccionado]) return;
+        const dataServidor = servidoresDisponibles[servidorSeleccionado];
+        document.getElementById('info-servidor-actual').innerHTML = `
+            <img src="${dataServidor.bandera}" class="bandera" alt="${servidorSeleccionado}"> ${dataServidor.nombre}
+        `;
+    }
+
+    function consultarRadar() {
+        if (Object.keys(servidoresDisponibles).length === 0) return;
+        window.apiVPN.enviar('ping-servers', servidoresDisponibles);
+    }
+
+    window.apiVPN.recibir('ping-results', (resultados) => {
+        datosRadar = resultados;
+        isPinging = false;
+        renderizarMenuServidores();
+    });
+
+    btnAbrirServidores.addEventListener('click', () => {
+        if (estaConectado || estaConectando) { mostrarMensaje("⚠️ Desconéctate para cambiar de servidor", true); return; }
+        const menuAbierto = menuServidores.classList.toggle('abierto');
+        gestionarRadar(menuAbierto);
+    });
+
+    document.addEventListener('click', (evento) => {
+        if (!btnAbrirServidores.contains(evento.target) && !menuServidores.contains(evento.target)) {
+            if (menuServidores.classList.contains('abierto')) {
+                menuServidores.classList.remove('abierto');
+                gestionarRadar(false);
+            }
+        }
+    });
+
+    btnLogin.addEventListener('click', () => {
+        const uuid = inputUuid.value.trim();
+        const pass = inputPass.value.trim();
+        if (!uuid || !pass) { txtErrorLogin.innerText = "Ingresa todos los datos"; return; }
+        txtErrorLogin.innerText = "";
+        btnLogin.innerText = "Verificando...";
+        btnLogin.classList.add('cargando');
+        window.apiVPN.enviar('login-request', { uuid: uuid, password: pass });
+    });
+
+    window.apiVPN.recibir('login-success', (config) => {
+        btnLogin.innerText = "Verificar Acceso";
+        btnLogin.classList.remove('cargando');
+        servidoresDisponibles = config.servidores;
+        servidorSeleccionado = config.ultimoServidor || '';
+        currentUserUuid = config.uuid;
+        renderizarMenuServidores();
+        pantallaLogin.classList.add('oculta');
+        mostrarMensaje("✓ Sesión iniciada");
+    });
+
+    window.apiVPN.recibir('login-error', (msg) => {
+        btnLogin.innerText = "Verificar Acceso";
+        btnLogin.classList.remove('cargando');
+        txtErrorLogin.innerText = msg;
+    });
+
+    btnCerrarSesion.addEventListener('click', () => {
+        if (estaConectado || estaConectando) { window.apiVPN.enviar('desconectar-vpn'); forzarDesconexionUI(); }
+        window.apiVPN.enviar('logout-request');
+        pantallaLogin.classList.remove('oculta');
+        inputUuid.value = ''; inputPass.value = '';
+        servidoresDisponibles = {};
+        currentUserUuid = '';
+        cerrarPaneles();
+        gestionarRadar(false);
+    });
+
+    window.apiVPN.enviar('get-settings');
+    window.apiVPN.enviar('get-app-version');
+    window.apiVPN.recibir('app-version', (version) => { document.getElementById('app-version-text').innerText = "v" + version; });
+    window.apiVPN.recibir('update-status', (msg) => { mostrarMensaje(msg); });
+
+    window.apiVPN.recibir('load-settings', (settings) => {
+        toggleTray.checked = settings.tray;
+        toggleAuto.checked = settings.autoConnect;
+        toggleKillswitch.checked = settings.killSwitch;
+        actualizarModoVisual(settings.connectionMode || 'vpn', false);
+        if (settings.uuid && settings.password) {
+            currentUserUuid = settings.uuid;
+            btnLogin.innerText = "Autenticando...";
+            btnLogin.classList.add('cargando');
+            window.apiVPN.enviar('login-request', { uuid: settings.uuid, password: settings.password });
+        }
+    });
+
+    [toggleTray, toggleAuto, toggleKillswitch].forEach(toggle => { toggle.addEventListener('change', () => aplicarGuardado(true)); });
+
+    function mostrarMensaje(texto, esError = false) {
+        toast.innerText = texto;
+        toast.style.background = esError ? "#e74c3c" : "#2ecc71";
+        toast.classList.add('visible');
+        setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+
+    const btnAyuda = document.getElementById('btn-ayuda');
+    const btnAjustes = document.getElementById('btn-ajustes');
+    const overlay = document.getElementById('overlay-menus');
+    const panelSoporte = document.getElementById('panel-soporte');
+    const panelCuenta = document.getElementById('panel-cuenta');
+    const btnCerrarSoporte = document.getElementById('btn-cerrar-soporte');
+    const btnCerrarCuenta = document.getElementById('btn-cerrar-cuenta');
+
+    function abrirPanel(panel) { overlay.classList.add('activo'); panel.classList.add('abierto'); }
+    function cerrarPaneles() {
+        overlay.classList.remove('activo');
+        panelSoporte.classList.remove('abierto');
+        panelCuenta.classList.remove('abierto');
+        panelCredenciales.classList.remove('abierto');
+    }
+
+    btnAyuda.addEventListener('click', () => abrirPanel(panelSoporte));
+    btnAjustes.addEventListener('click', () => abrirPanel(panelCuenta));
+    btnCerrarSoporte.addEventListener('click', cerrarPaneles);
+    btnCerrarCuenta.addEventListener('click', cerrarPaneles);
+    overlay.addEventListener('click', cerrarPaneles);
+
+    document.querySelectorAll('.support-item[data-clipboard]').forEach(item => {
+        item.addEventListener('click', () => {
+            navigator.clipboard.writeText(item.getAttribute('data-clipboard')).then(() => { mostrarMensaje("✓ Copiado al portapapeles"); });
+        });
+    });
+
+    const btnConectar = document.getElementById('btn-conectar');
+    const statusTextTop = document.querySelector('.status-text');
+    const btnTexto = btnConectar.querySelector('span');
+
+    btnConectar.addEventListener('click', () => {
+        if (menuServidores.classList.contains('abierto')) { menuServidores.classList.remove('abierto'); gestionarRadar(false); }
+        if (estaConectando || estaDesconectando) return;
+        if (!estaConectado) {
+            if (!servidorSeleccionado) { mostrarMensaje("⚠️ Error: No hay servidor seleccionado", true); return; }
+            aplicarGuardado(false);
+            estaConectando = true;
+            toggleKillswitch.disabled = true;
+            btnConectar.className = 'btn-conectar conectando';
+            btnTexto.innerText = 'CONECTANDO...';
+            statusTextTop.innerText = 'Iniciando modo ' + (modoConexionActual === 'vpn' ? 'TUN' : 'Proxy') + '...';
+            window.apiVPN.enviar('conectar-vpn', { vlessKey: servidoresDisponibles[servidorSeleccionado].vless, serverId: servidorSeleccionado });
+        } else {
+            estaDesconectando = true;
+            btnConectar.className = 'btn-conectar desconectando';
+            btnTexto.innerText = 'APAGANDO...';
+            statusTextTop.innerText = 'Deteniendo servicios...';
+            window.apiVPN.enviar('desconectar-vpn');
+            setTimeout(() => { forzarDesconexionUI(); }, 1200);
+        }
+    });
+
+    function forzarDesconexionUI() {
+        estaConectado = false; estaConectando = false; estaDesconectando = false;
+        toggleKillswitch.disabled = false;
+        btnConectar.className = 'btn-conectar';
+        statusTextTop.classList.remove('protegido');
+        btnTexto.innerText = 'CONECTAR';
+        statusTextTop.innerText = 'Protección Inactiva';
+        mostrarMensaje("Desconectado");
+    }
+
+    // CORRECCIÓN APLICADA AQUÍ: Control del temporizador
+    window.apiVPN.recibir('vpn-conectada-exito', () => {
+        timeoutConexionId = setTimeout(() => {
+            if (!estaConectando) return; // Abortar si ya se desconectó/falló
+            estaConectando = false; estaConectado = true;
+            btnConectar.className = 'btn-conectar protegido';
+            statusTextTop.classList.add('protegido');
+            btnTexto.innerText = 'DESCONECTAR';
+            statusTextTop.innerText = modoConexionActual === 'vpn' ? 'VPN Activa' : 'Proxy Activo';
+            mostrarMensaje("✓ Conexión establecida");
+        }, 4500);
+    });
+
+    // CORRECCIÓN APLICADA AQUÍ: Mata el temporizador si hay error
+    window.apiVPN.recibir('error-suscripcion', (mensaje) => {
+        if (timeoutConexionId) clearTimeout(timeoutConexionId);
+        forzarDesconexionUI();
+        mostrarMensaje(`❌ ${mensaje}`, true);
+    });
+
+    const btnMin = document.getElementById('btn-minimizar');
+    btnMin.addEventListener('click', () => { btnMin.classList.add('bloqueo-hover'); window.apiVPN.enviar('minimizar-ventana'); });
+    document.getElementById('btn-cerrar').addEventListener('click', () => { window.apiVPN.enviar('cerrar-ventana'); });
+    window.addEventListener('mousemove', () => btnMin.classList.remove('bloqueo-hover'));
+
+    // ==========================================
+    // LÓGICA DEL PANEL DE CREDENCIALES
+    // ==========================================
+    const panelCredenciales = document.getElementById('panel-credenciales');
+    const btnAbrirCredenciales = document.getElementById('btn-abrir-credenciales');
+    const btnVolverAjustes = document.getElementById('btn-volver-ajustes');
+    const btnCopiarSub = document.getElementById('btn-copiar-sub');
+
+    function renderizarListaVless() {
+        const contenedor = document.getElementById('lista-vless-nodos');
+        contenedor.innerHTML = '';
+
+        for (const idPais in servidoresDisponibles) {
+            const data = servidoresDisponibles[idPais];
+            const div = document.createElement('div');
+            div.className = 'support-item';
+            div.style.cursor = 'pointer';
+            div.innerHTML = `
+                <span class="support-label">
+                    <img src="${data.bandera}" class="vless-flag" alt="${idPais}">
+                    ${data.nombre}
+                </span>
+                <span class="support-value vless-copy-text">Copiar Enlace</span>
+            `;
+
+            div.addEventListener('click', () => {
+                navigator.clipboard.writeText(data.vless).then(() => {
+                    mostrarMensaje("✓ VLESS de " + data.nombre + " copiado");
+                });
+            });
+            contenedor.appendChild(div);
+        }
+    }
+
+    btnAbrirCredenciales.addEventListener('click', () => {
+        panelCuenta.classList.remove('abierto');
+        panelCredenciales.classList.add('abierto');
+        renderizarListaVless();
+    });
+
+    btnVolverAjustes.addEventListener('click', () => {
+        panelCredenciales.classList.remove('abierto');
+        panelCuenta.classList.add('abierto');
+    });
+
+    btnCopiarSub.addEventListener('click', () => {
+        if(!currentUserUuid) return;
+        const subLink = `https://arrow-x.org:5000/sub/${currentUserUuid}`;
+        navigator.clipboard.writeText(subLink).then(() => {
+            mostrarMensaje("✓ Link de Suscripción copiado");
+        });
+    });
+</script>
+</body>
+</html>

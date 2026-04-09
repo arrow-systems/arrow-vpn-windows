@@ -1,0 +1,830 @@
+/* --- BASE INVISIBLE (Mata los bordes de Windows) --- */
+html {
+    height: 100%;
+    background: transparent;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 1px;
+    box-sizing: border-box;
+    background: transparent;
+    overflow: hidden;
+}
+
+/* --- APP PREMIUM --- */
+.app-wrapper {
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    user-select: none;
+}
+
+/* --- BARRA DE TÍTULO Y CONTROLES --- */
+.title-bar {
+    width: 100%;
+    height: 35px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-bar-drag-area {
+    flex-grow: 1;
+    height: 80px;
+    -webkit-app-region: drag;
+}
+
+.window-controls {
+    display: flex;
+    height: 35px;
+    -webkit-app-region: no-drag;
+    position: absolute;
+    right: 0;
+}
+
+.win-btn {
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    width: 45px;
+    height: 100%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border-radius: 0;
+}
+
+.win-btn:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+.close-btn:hover { background: #e74c3c; color: white; border-top-right-radius: 19px; }
+.bloqueo-hover { background: transparent !important; color: #7f8c8d !important; }
+
+/* --- HEADER Y BOTONES SUPERIORES --- */
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 25px 10px 25px;
+    box-sizing: border-box;
+    z-index: 110;
+    position: relative;
+    pointer-events: none;
+}
+
+.header h2 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 1px; pointer-events: auto;}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    padding: 5px;
+    pointer-events: auto;
+    -webkit-app-region: no-drag;
+}
+
+.icon-btn:hover { color: #ffffff; transform: scale(1.1); }
+
+/* --- NUEVO SELECTOR DE MODO (PÍLDORA MINIMALISTA) --- */
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 15px auto;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 3px;
+    -webkit-app-region: no-drag;
+}
+
+.mode-btn {
+    padding: 4px 18px;
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.mode-btn:hover:not(.active) {
+    color: #bdc3c7;
+}
+
+.mode-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.status-text { color: #7f8c8d; font-size: 14px; margin-top: 5px; z-index: 10;}
+
+/* --- BOTÓN CENTRAL --- */
+.btn-maestro-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.btn-conectar {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.03);
+    background: #121216;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    -webkit-app-region: no-drag;
+}
+
+/* ==================================================== */
+/* --- ESTADOS DEL BOTÓN MAESTRO (DISEÑO ORIGINAL) --- */
+/* ==================================================== */
+
+/* 1. HOVER ESTADO INICIAL (Intención de encender -> Se ilumina verde) */
+.btn-conectar:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 35px rgba(46, 204, 113, 0.15), inset 0 0 20px rgba(46, 204, 113, 0.05);
+    color: #2ecc71;
+}
+.btn-conectar:hover .rayo {
+    filter: drop-shadow(0 0 15px rgba(46, 204, 113, 0.6));
+}
+.btn-conectar:active { transform: scale(0.98); }
+
+.rayo { margin-bottom: 5px; transition: all 0.3s ease; }
+.btn-conectar span { font-weight: 700; font-size: 16px; letter-spacing: 1.5px; transition: color 0.3s; }
+
+/* 2. ESTADO CONECTANDO (Titila Verde) */
+@keyframes pulso-conectando {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(46, 204, 113, 0.3)); color: #7f8c8d; }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(46, 204, 113, 0.9)); color: #2ecc71; }
+    100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(46, 204, 113, 0.3)); color: #7f8c8d; }
+}
+.btn-conectar.conectando .rayo { animation: pulso-conectando 1s infinite ease-in-out; }
+.btn-conectar.conectando span { opacity: 0.5; color: #2ecc71; }
+
+/* 3. ESTADO PROTEGIDO (Conectado fijo en verde) */
+.btn-conectar.protegido {
+    background: #121216;
+    border-color: rgba(46, 204, 113, 0.2);
+    box-shadow: 0 0 50px rgba(46, 204, 113, 0.3), inset 0 0 20px rgba(46, 204, 113, 0.05);
+    color: #2ecc71;
+}
+.btn-conectar.protegido .rayo {
+    filter: drop-shadow(0 0 15px rgba(46, 204, 113, 0.8));
+}
+.status-text.protegido {
+    color: #2ecc71;
+    font-weight: 700;
+    text-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+}
+
+/* 4. HOVER ESTADO PROTEGIDO (Intención de apagar -> Se ilumina rojo) */
+.btn-conectar.protegido:hover {
+    background: #121216;
+    border-color: rgba(231, 76, 60, 0.3);
+    box-shadow: 0 0 60px rgba(231, 76, 60, 0.4), inset 0 0 25px rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    transform: scale(1.05);
+}
+.btn-conectar.protegido:hover .rayo {
+    filter: drop-shadow(0 0 20px rgba(231, 76, 60, 0.9));
+}
+
+/* 5. ESTADO DESCONECTANDO (Titila Rojo) */
+@keyframes pulso-desconectando {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(231, 76, 60, 0.3)); color: #e74c3c; }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(231, 76, 60, 0.9)); color: #c0392b; }
+    100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(231, 76, 60, 0.3)); color: #e74c3c; }
+}
+.btn-conectar.desconectando {
+    border-color: rgba(231, 76, 60, 0.2) !important;
+    box-shadow: 0 0 30px rgba(231, 76, 60, 0.2), inset 0 0 15px rgba(231, 76, 60, 0.05) !important;
+}
+.btn-conectar.desconectando .rayo { animation: pulso-desconectando 0.6s infinite ease-in-out; }
+.btn-conectar.desconectando span { opacity: 0.5; color: #e74c3c; }
+
+/* --- SELECTOR DE SERVIDORES --- */
+.bottom-container {
+    width: 90%;
+    max-width: 340px;
+    height: 90px;
+    background: rgba(21, 21, 30, 0.6);
+    border-radius: 18px;
+    margin-bottom: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    z-index: 20;
+}
+
+.bottom-label { font-size: 11px; color: #aaa; margin-bottom: 8px; font-weight: 600; }
+
+.btn-servidor {
+    width: 90%;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    -webkit-app-region: no-drag;
+}
+
+.btn-servidor:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- MENÚ FLOTANTE SERVIDORES --- */
+.server-menu {
+    position: absolute;
+    bottom: 100px;
+    width: 90%;
+    max-width: 340px;
+    background: rgba(15, 15, 20, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(15px);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.server-menu.abierto {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* --- OPCIONES DEL MENÚ Y ESTADOS --- */
+.server-option {
+    width: 100%;
+    background: transparent;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    -webkit-app-region: no-drag;
+}
+
+.server-option:hover:not(.disabled) { background: rgba(255, 255, 255, 0.1); }
+.server-option.disabled { color: #555555; cursor: not-allowed; }
+
+.server-info { display: flex; align-items: center; }
+
+.status-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+.dot-activo { background-color: #2ecc71; color: #2ecc71; }
+.dot-mantenimiento { background-color: #f39c12; color: #f39c12; }
+.dot-apagado { background-color: #e74c3c; color: #e74c3c; }
+
+.bandera { width: 16px; border-radius: 2px; margin-right: 8px; box-shadow: 0 0 3px rgba(0,0,0,0.5); }
+
+/* ==================================================== */
+/* --- ESTILOS DE LOS PANELES DE AJUSTES Y SOPORTE --- */
+/* ==================================================== */
+
+.overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.activo {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Paneles base (Soporte y Cuenta) */
+.panel-flotante {
+    position: absolute;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 340px;
+    background: rgba(15, 15, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    transition: bottom 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.panel-flotante.abierto {
+    bottom: 40px;
+}
+
+.panel-title {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+/* --- ELEMENTOS DEL PANEL DE SOPORTE --- */
+.support-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    -webkit-app-region: no-drag;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.support-item:hover { background: rgba(255, 255, 255, 0.1); }
+
+.support-label {
+    font-size: 11px;
+    color: #7f8c8d;
+    margin-bottom: 4px;
+}
+
+.support-value {
+    font-size: 13px;
+    font-weight: 700;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* --- ELEMENTOS DEL PANEL DE CUENTA --- */
+.input-llave {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #2ecc71;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    -webkit-app-region: no-drag;
+    transition: border-color 0.2s;
+}
+
+.input-llave:focus {
+    border-color: #3498db;
+}
+
+/* Botones dentro de los paneles */
+.panel-botones {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.panel-btn-cerrar, .panel-btn-accion {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-app-region: no-drag;
+    color: white;
+}
+
+.panel-btn-cerrar {
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.panel-btn-cerrar:hover { background: rgba(255, 255, 255, 0.15); }
+
+.panel-btn-accion { background: #1a5b9c; }
+.panel-btn-accion:hover:not(.disabled) { background: #2980b9; }
+.panel-btn-accion.success { background: #2ecc71; }
+
+.panel-btn-accion.disabled {
+    background: rgba(255, 255, 255, 0.05);
+    color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+/* --- TOAST DE NOTIFICACIÓN --- */
+.toast {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #2ecc71;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 300;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ==================================================== */
+/* --- ESTILOS DE LOS INTERRUPTORES (TOGGLES) --- */
+/* ==================================================== */
+
+.setting-group {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.setting-label-main {
+    display: block;
+    font-size: 11px;
+    color: #7f8c8d;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ddd;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    -webkit-app-region: no-drag;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #7f8c8d;
+    transition: .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+input:checked + .slider {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+    background-color: white;
+}
+
+input:checked + .slider.killswitch-slider {
+    background-color: #e74c3c;
+    border-color: #c0392b;
+}
+
+/* --- PANTALLA DE LOGIN --- */
+.pantalla-login {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 35px);
+    background: rgba(10, 10, 15, 0.98);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: opacity 0.4s ease;
+}
+
+.pantalla-login.oculta {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.login-box {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.login-box h2 {
+    color: white;
+    margin: 0;
+    font-size: 22px;
+}
+
+.login-box p {
+    color: #7f8c8d;
+    font-size: 13px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.login-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #2ecc71;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border 0.2s;
+    text-align: center;
+}
+
+.login-input:focus {
+    border-color: #6b4cff;
+}
+
+.btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, #6a5acd 0%, #3a2a8d 100%);
+    border: none;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(106, 90, 205, 0.4);
+}
+
+.btn-login.cargando {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.login-error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    height: 15px;
+    font-weight: 600;
+}
+
+.btn-logout {
+    width: 100%;
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+}
+
+.btn-logout:hover {
+    background: rgba(231, 76, 60, 0.3);
+    color: white;
+}
+
+/* --- BOTÓN DE RECARGA DE LATENCIA --- */
+.btn-recargar {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+    -webkit-app-region: no-drag;
+}
+
+.btn-recargar:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-recargar:hover svg {
+    fill: #ffffff;
+}
+
+.btn-recargar svg {
+    transition: fill 0.2s;
+}
+
+.spin-anim svg {
+    animation: giro-recarga 1s linear infinite;
+    fill: #2ecc71;
+}
+
+@keyframes giro-recarga {
+    100% { transform: rotate(360deg); }
+}
+
+/* ==================================================== */
+/* --- PANEL DE CREDENCIALES --- */
+/* ==================================================== */
+
+.btn-credenciales {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', sans-serif;
+    -webkit-app-region: no-drag;
+}
+
+.btn-credenciales:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.credenciales-subtitle {
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.btn-copiar-sub {
+    width: 100%;
+    background: #2ecc71;
+    border: none;
+    color: #000;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', sans-serif;
+    -webkit-app-region: no-drag;
+}
+
+.btn-copiar-sub:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+}
+
+.credenciales-group {
+    margin-bottom: 20px;
+}
+
+.vless-list-container {
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Estilizar el scrollbar de la lista VLESS */
+.vless-list-container::-webkit-scrollbar {
+    width: 4px;
+}
+.vless-list-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.vless-copy-text {
+    color: #3498db;
+    font-size: 11px;
+}
+
+.vless-flag {
+    width: 16px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
