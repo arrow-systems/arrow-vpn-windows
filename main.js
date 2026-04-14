@@ -61,7 +61,7 @@ const configJsonPath = path.join(app.getPath('userData'), 'config.json');
 const singboxLogPath = path.join(app.getPath('userData'), 'singbox_error.log');
 const appErrorLogPath = path.join(app.getPath('userData'), 'app_error.log');
 
-const API_BASE_URL = 'https://arrow-x.org:5000';
+const API_BASE_URL = 'https://arrow-x.org';
 
 function getLocalIP() {
     try {
