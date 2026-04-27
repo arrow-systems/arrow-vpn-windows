@@ -13,17 +13,20 @@ const { autoUpdater } = require('electron-updater');
 
 // Evitar problemas de caché al descargar el latest.yml
 autoUpdater.requestHeaders = { "Cache-Control": "no-cache" };
+
 // Descarga silenciosa en segundo plano y autoinstalación al cerrar
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
 const dns = require('dns').promises;
 const dnsSync = require('dns');
+
 dnsSync.setServers(['1.1.1.1', '2606:4700:4700::1111']);
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const store = new Store({ name: 'arrow_credenciales' });
+
 let tray = null;
 let mainWindow = null;
 let proxyProcess = null;
@@ -34,7 +37,7 @@ let singboxStdErr = '';
 let singboxStdOut = '';
 
 // ==========================================
-// MAGIA STEALTH: Puerto base (mutará al conectar)
+// MAGIA STEALTH: Puerto base, mutará al conectar
 // ==========================================
 let puertoStealthLocal = 10808;
 
@@ -56,7 +59,7 @@ const rutaBinarios = app.isPackaged
     ? path.join(process.resourcesPath, 'app.asar.unpacked', 'bin')
     : path.join(__dirname, 'bin');
 
-// APUNTAMOS AL NUEVO MOTOR (SING-BOX)
+// APUNTAMOS AL NUEVO MOTOR: SING-BOX
 const singboxPath = path.join(rutaBinarios, 'sing-box.exe');
 const configJsonPath = path.join(app.getPath('userData'), 'config.json');
 const singboxLogPath = path.join(app.getPath('userData'), 'singbox_error.log');
@@ -67,15 +70,19 @@ const API_BASE_URL = 'https://arrow-x.org';
 function getLocalIP() {
     try {
         const interfaces = os.networkInterfaces();
+
         for (const name of Object.keys(interfaces)) {
             const lowerName = name.toLowerCase();
+
             if (
                 lowerName.includes('tun') ||
                 lowerName.includes('tap') ||
                 lowerName.includes('virtual') ||
                 lowerName.includes('vethernet') ||
                 lowerName.includes('npcap')
-            ) continue;
+            ) {
+                continue;
+            }
 
             for (const iface of interfaces[name]) {
                 if (
@@ -89,11 +96,13 @@ function getLocalIP() {
             }
         }
     } catch (e) {}
+
     return null;
 }
 
 function getSettings() {
     const saved = store.get('userSettings') || {};
+
     return {
         uuid: saved.uuid || '',
         password: saved.password || '',
@@ -208,6 +217,7 @@ function resumirErrorParaUI(errorMsg, modo = 'vpn') {
 function refrescarProxyWindows() {
     try {
         const scriptPath = path.join(app.getPath('userData'), 'refresh_proxy.ps1');
+
         const psCode = `
         $signature = @'
         [DllImport("wininet.dll", SetLastError = true, CharSet=CharSet.Auto)]
@@ -217,15 +227,26 @@ function refrescarProxyWindows() {
         $interopHelper::InternetSetOption(0, 39, 0, 0) | Out-Null
         $interopHelper::InternetSetOption(0, 37, 0, 0) | Out-Null
         `;
+
         fs.writeFileSync(scriptPath, psCode);
-        spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', scriptPath], { windowsHide: true });
+
+        spawn(
+            'powershell.exe',
+            ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', scriptPath],
+            { windowsHide: true }
+        );
     } catch (e) {}
 }
 
 function limpiarProxySistema() {
     try {
-        const p = session.defaultSession.setProxy({ proxyRules: 'direct://' });
-        if (p && p.catch) p.catch(() => {});
+        const p = session.defaultSession.setProxy({
+            proxyRules: 'direct://'
+        });
+
+        if (p && p.catch) {
+            p.catch(() => {});
+        }
     } catch (e) {}
 
     try {
@@ -250,7 +271,10 @@ function activarProxySistema() {
         const p = session.defaultSession.setProxy({
             proxyRules: `http=127.0.0.1:${puertoStealthLocal};https=127.0.0.1:${puertoStealthLocal}`
         });
-        if (p && p.catch) p.catch(() => {});
+
+        if (p && p.catch) {
+            p.catch(() => {});
+        }
     } catch (e) {}
 
     try {
@@ -288,27 +312,46 @@ function activarProxySistema() {
 
 function limpiarReglasFirewall() {
     try {
-        spawn('netsh', ['advfirewall', 'firewall', 'delete', 'rule', 'name=Arrow_KS_Block'], { windowsHide: true });
+        spawn('netsh', [
+            'advfirewall',
+            'firewall',
+            'delete',
+            'rule',
+            'name=Arrow_KS_Block'
+        ], { windowsHide: true });
     } catch (e) {}
 
     try {
         const psCleanupScriptPath = path.join(app.getPath('userData'), 'cleanup_dns.ps1');
+
         const psCleanupCommands = `
             Get-DnsClientNrptRule -ErrorAction SilentlyContinue | Where-Object {$_.Comment -eq 'ArrowVPN'} | Remove-DnsClientNrptRule -Force -ErrorAction SilentlyContinue
             Clear-DnsClientCache
             ipconfig /flushdns
         `;
+
         fs.writeFileSync(psCleanupScriptPath, psCleanupCommands);
-        spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', psCleanupScriptPath], { windowsHide: true });
+
+        spawn(
+            'powershell.exe',
+            ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', psCleanupScriptPath],
+            { windowsHide: true }
+        );
     } catch (e) {}
 }
 
 async function resolverIP(host) {
-    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return host;
-    if (host.includes(':')) return host;
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) {
+        return host;
+    }
+
+    if (host.includes(':')) {
+        return host;
+    }
 
     try {
         let timeoutId;
+
         const timeoutPromise = new Promise((_, reject) => {
             timeoutId = setTimeout(() => reject(new Error('timeout')), 5000);
         });
@@ -323,8 +366,13 @@ async function resolverIP(host) {
 
         clearTimeout(timeoutId);
 
-        if (Array.isArray(ipv6) && ipv6.length > 0) return ipv6[0];
-        if (Array.isArray(ipv4) && ipv4.length > 0) return ipv4[0];
+        if (Array.isArray(ipv6) && ipv6.length > 0) {
+            return ipv6[0];
+        }
+
+        if (Array.isArray(ipv4) && ipv4.length > 0) {
+            return ipv4[0];
+        }
 
         return null;
     } catch (err) {
@@ -342,6 +390,7 @@ function leerLogSingbox() {
             return fs.readFileSync(singboxLogPath, 'utf8').trim();
         }
     } catch (e) {}
+
     return '';
 }
 
@@ -355,14 +404,21 @@ function detenerSingbox() {
         try {
             if (proxyProcess && !proxyProcess.killed) {
                 const p = proxyProcess;
+
                 proxyProcess = null;
 
                 p.once('exit', () => resolve());
-                try { p.kill(); } catch (e) { resolve(); }
+
+                try {
+                    p.kill();
+                } catch (e) {
+                    resolve();
+                }
 
                 setTimeout(() => {
                     resolve();
                 }, 1500);
+
                 return;
             }
         } catch (e) {}
@@ -372,6 +428,7 @@ function detenerSingbox() {
         } catch (e) {}
 
         proxyProcess = null;
+
         setTimeout(resolve, 800);
     });
 }
@@ -385,13 +442,16 @@ function esperarPuerto(host, port, timeoutMs = 8000) {
             let terminado = false;
 
             const cerrar = () => {
-                try { socket.destroy(); } catch (e) {}
+                try {
+                    socket.destroy();
+                } catch (e) {}
             };
 
             socket.setTimeout(1000);
 
             socket.connect(port, host, () => {
                 if (terminado) return;
+
                 terminado = true;
                 cerrar();
                 resolve(true);
@@ -399,6 +459,7 @@ function esperarPuerto(host, port, timeoutMs = 8000) {
 
             socket.on('error', () => {
                 if (terminado) return;
+
                 terminado = true;
                 cerrar();
 
@@ -411,6 +472,7 @@ function esperarPuerto(host, port, timeoutMs = 8000) {
 
             socket.on('timeout', () => {
                 if (terminado) return;
+
                 terminado = true;
                 cerrar();
 
@@ -431,7 +493,12 @@ async function esperarInterfazTun(nombreInterfaz, timeoutMs = 12000) {
 
     while (Date.now() - inicio < timeoutMs) {
         try {
-            const resultado = await ejecutarComandoCapturando('netsh', ['interface', 'show', 'interface']);
+            const resultado = await ejecutarComandoCapturando('netsh', [
+                'interface',
+                'show',
+                'interface'
+            ]);
+
             if ((resultado.stdout || '').toLowerCase().includes(nombreInterfaz.toLowerCase())) {
                 return true;
             }
@@ -446,7 +513,11 @@ async function esperarInterfazTun(nombreInterfaz, timeoutMs = 12000) {
 function ejecutarComandoCapturando(cmd, args = [], options = {}) {
     return new Promise((resolve, reject) => {
         try {
-            const child = spawn(cmd, args, { windowsHide: true, ...options });
+            const child = spawn(cmd, args, {
+                windowsHide: true,
+                ...options
+            });
+
             let stdout = '';
             let stderr = '';
 
@@ -463,7 +534,11 @@ function ejecutarComandoCapturando(cmd, args = [], options = {}) {
             });
 
             child.on('close', (code) => {
-                resolve({ code, stdout, stderr });
+                resolve({
+                    code,
+                    stdout,
+                    stderr
+                });
             });
         } catch (err) {
             reject(err);
@@ -514,17 +589,21 @@ async function iniciarSingbox(configPath) {
 
         proxyProcess.once('error', (err) => {
             if (resuelto) return;
+
             resuelto = true;
             proxyProcess = null;
+
             reject(new Error(`Error iniciando sing-box: ${err.message}`));
         });
 
         proxyProcess.once('exit', (code, signal) => {
             if (resuelto) return;
+
             resuelto = true;
             proxyProcess = null;
 
             const logTxt = leerLogSingbox();
+
             const detalle = [
                 singboxStdErr.trim(),
                 logTxt.trim()
@@ -538,6 +617,7 @@ async function iniciarSingbox(configPath) {
 
         setTimeout(() => {
             if (resuelto) return;
+
             resuelto = true;
             resolve(true);
         }, 1200);
@@ -563,10 +643,15 @@ function iniciarMonitorSingbox() {
                 }
 
                 const detalle = leerLogSingbox() || singboxStdErr || 'El motor VPN se detuvo.';
+
                 registrarErrorApp('monitor-singbox', detalle);
 
                 if (mainWindow && !mainWindow.isDestroyed()) {
-                    const msgBase = resumirErrorParaUI('sing-box terminó inmediatamente', configEnMemoria.connectionMode);
+                    const msgBase = resumirErrorParaUI(
+                        'sing-box terminó inmediatamente',
+                        configEnMemoria.connectionMode
+                    );
+
                     mainWindow.webContents.send(
                         'error-suscripcion',
                         configEnMemoria.killSwitch
@@ -582,7 +667,7 @@ function iniciarMonitorSingbox() {
 }
 
 // ==========================================
-// MOTOR DE PING LOCAL (TCP)
+// MOTOR DE PING LOCAL TCP
 // ==========================================
 ipcMain.on('ping-servers', async (event, servidores) => {
     const resultados = {};
@@ -590,41 +675,67 @@ ipcMain.on('ping-servers', async (event, servidores) => {
     const promesas = Object.keys(servidores).map(idPais => {
         return new Promise((resolve) => {
             const vlessUrl = servidores[idPais].vless;
-            let host, port;
+
+            let host;
+            let port;
 
             try {
                 const urlObj = new URL(vlessUrl);
                 host = urlObj.hostname;
                 port = parseInt(urlObj.port || '443', 10);
             } catch (e) {
-                resultados[idPais] = { estado: "Error URL", ping: -1 };
+                resultados[idPais] = {
+                    estado: "Error URL",
+                    ping: -1
+                };
+
                 resolve();
                 return;
             }
 
             const startTime = Date.now();
             const socket = new net.Socket();
+
             socket.setTimeout(2000);
 
             socket.connect(port, host, () => {
                 const ping = Date.now() - startTime;
-                let estado = "Óptimo";
-                if (ping >= 200 && ping <= 800) estado = "Latencia Alta";
-                if (ping > 800) estado = "Sobrecargado";
 
-                resultados[idPais] = { estado, ping };
+                let estado = "Óptimo";
+
+                if (ping >= 200 && ping <= 800) {
+                    estado = "Latencia Alta";
+                }
+
+                if (ping > 800) {
+                    estado = "Sobrecargado";
+                }
+
+                resultados[idPais] = {
+                    estado,
+                    ping
+                };
+
                 socket.destroy();
                 resolve();
             });
 
             socket.on('error', () => {
-                resultados[idPais] = { estado: "Caído", ping: -1 };
+                resultados[idPais] = {
+                    estado: "Caído",
+                    ping: -1
+                };
+
                 socket.destroy();
                 resolve();
             });
 
             socket.on('timeout', () => {
-                resultados[idPais] = { estado: "Timeout", ping: -1 };
+                resultados[idPais] = {
+                    estado: "Timeout",
+                    ping: -1
+                };
+
                 socket.destroy();
                 resolve();
             });
@@ -632,6 +743,7 @@ ipcMain.on('ping-servers', async (event, servidores) => {
     });
 
     await Promise.all(promesas);
+
     event.reply('ping-results', resultados);
 });
 
@@ -642,8 +754,13 @@ ipcMain.on('login-request', async (event, creds) => {
 
         const response = await fetch(`${API_BASE_URL}/api/login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ uuid: creds.uuid, password: creds.password }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uuid: creds.uuid,
+                password: creds.password
+            }),
             signal: controller.signal
         });
 
@@ -655,7 +772,9 @@ ipcMain.on('login-request', async (event, creds) => {
             configEnMemoria.uuid = creds.uuid;
             configEnMemoria.password = creds.password;
             configEnMemoria.servidores = data.servidores;
+
             store.set('userSettings', configEnMemoria);
+
             event.reply('login-success', configEnMemoria);
         } else {
             event.reply('login-error', data.msg || "Credenciales incorrectas");
@@ -678,6 +797,7 @@ ipcMain.on('logout-request', () => {
     configEnMemoria.uuid = '';
     configEnMemoria.password = '';
     configEnMemoria.servidores = {};
+
     store.set('userSettings', configEnMemoria);
 });
 
@@ -685,16 +805,26 @@ async function verificarSuscripcionReal(uuid) {
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000);
-        const response = await fetch(`${API_BASE_URL}/validar/${uuid}`, { signal: controller.signal });
+
+        const response = await fetch(`${API_BASE_URL}/validar/${uuid}`, {
+            signal: controller.signal
+        });
+
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-            return { valido: false, msg: "Suscripción inactiva" };
+            return {
+                valido: false,
+                msg: "Suscripción inactiva"
+            };
         }
 
         return await response.json();
     } catch (e) {
-        return { valido: false, msg: "Timeout al validar" };
+        return {
+            valido: false,
+            msg: "Timeout al validar"
+        };
     }
 }
 
@@ -702,6 +832,7 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
     try {
         const url = new URL(vlessUrl);
         const params = new URLSearchParams(url.search);
+
         const hostOriginal = url.hostname;
         const sni = params.get("sni") || hostOriginal;
         const security = (params.get("security") || "").toLowerCase();
@@ -722,6 +853,7 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
         };
 
         const flow = params.get("flow");
+
         if (flow) {
             proxyOutbound.flow = flow;
         }
@@ -737,6 +869,7 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
             };
 
             const alpn = params.get("alpn");
+
             if (alpn) {
                 proxyOutbound.tls.alpn = alpn
                     .split(",")
@@ -767,6 +900,7 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
             };
 
             const serviceName = params.get("serviceName") || params.get("service_name");
+
             if (serviceName) {
                 proxyOutbound.transport.service_name = serviceName;
             }
@@ -778,7 +912,9 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
             };
         }
 
-        const nodeCIDR = nodeIP.includes(":") ? `${nodeIP}/128` : `${nodeIP}/32`;
+        const nodeCIDR = nodeIP.includes(":")
+            ? `${nodeIP}/128`
+            : `${nodeIP}/32`;
 
         const config = {
             log: {
@@ -883,10 +1019,16 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
         }
 
         fs.writeFileSync(configJsonPath, JSON.stringify(config, null, 4));
+
         return true;
     } catch (e) {
         console.log("Error generando config sing-box:", e.message);
-        registrarErrorApp('generar-config-singbox', e.stack || e.message || String(e));
+
+        registrarErrorApp(
+            'generar-config-singbox',
+            e.stack || e.message || String(e)
+        );
+
         return false;
     }
 }
@@ -894,12 +1036,15 @@ function generarConfigSingbox(vlessUrl, nodeIP) {
 ipcMain.on('conectar-vpn', async (event, payload) => {
     try {
         desconexionManual = false;
+
         const { vlessKey, serverId } = payload;
 
         configEnMemoria.ultimoServidor = serverId;
+
         store.set('userSettings', configEnMemoria);
 
         let vlessUrlObj;
+
         try {
             vlessUrlObj = new URL(vlessKey);
         } catch (e) {
@@ -907,11 +1052,13 @@ ipcMain.on('conectar-vpn', async (event, payload) => {
         }
 
         const nodeIP = await resolverIP(vlessUrlObj.hostname);
+
         if (!nodeIP) {
             return event.reply('error-suscripcion', "Servidor inaccesible.");
         }
 
         const status = await verificarSuscripcionReal(configEnMemoria.uuid);
+
         if (!status.valido) {
             return event.reply('error-suscripcion', status.msg || "Suscripción inválida.");
         }
@@ -924,7 +1071,9 @@ ipcMain.on('conectar-vpn', async (event, payload) => {
         limpiarProxySistema();
 
         if (configEnMemoria.connectionMode === 'vpn') {
-            try { spawn('ipconfig', ['/flushdns'], { windowsHide: true }); } catch (e) {}
+            try {
+                spawn('ipconfig', ['/flushdns'], { windowsHide: true });
+            } catch (e) {}
         }
 
         await iniciarSingbox(configJsonPath);
@@ -934,12 +1083,14 @@ ipcMain.on('conectar-vpn', async (event, payload) => {
             activarProxySistema();
         } else {
             const interfazLista = await esperarInterfazTun('ArrowTUN', 12000);
+
             if (!interfazLista) {
                 throw new Error('El adaptador TUN no apareció a tiempo.');
             }
 
             try {
                 const psNetworkScriptPath = path.join(app.getPath('userData'), 'network_setup.ps1');
+
                 const psNetworkCommands = `
                     netsh interface ip set address "ArrowTUN" static 172.19.0.2 255.255.255.0 172.19.0.1
                     netsh interface ip set dns "ArrowTUN" static 1.1.1.1 validate=no
@@ -951,22 +1102,34 @@ ipcMain.on('conectar-vpn', async (event, payload) => {
                     Clear-DnsClientCache
                     ipconfig /flushdns
                 `;
+
                 fs.writeFileSync(psNetworkScriptPath, psNetworkCommands);
-                spawn('powershell.exe', ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', psNetworkScriptPath], { windowsHide: true });
+
+                spawn(
+                    'powershell.exe',
+                    ['-WindowStyle', 'Hidden', '-ExecutionPolicy', 'Bypass', '-File', psNetworkScriptPath],
+                    { windowsHide: true }
+                );
             } catch (e) {
-                registrarErrorApp('network-setup-ps1', e.stack || e.message || String(e));
+                registrarErrorApp(
+                    'network-setup-ps1',
+                    e.stack || e.message || String(e)
+                );
             }
         }
 
         isVpnConnected = true;
-        iniciarMonitorSingbox();
-        event.reply('vpn-conectada-exito');
 
+        iniciarMonitorSingbox();
+
+        event.reply('vpn-conectada-exito');
     } catch (e) {
         console.log('Error al iniciar VPN:', e.message);
 
         isVpnConnected = false;
+
         await detenerSingbox();
+
         limpiarProxySistema();
 
         if (configEnMemoria.connectionMode === 'vpn') {
@@ -998,6 +1161,7 @@ ipcMain.on('desconectar-vpn', async () => {
     }
 
     await detenerSingbox();
+
     limpiarProxySistema();
 
     if (configEnMemoria.connectionMode === 'vpn') {
@@ -1023,12 +1187,22 @@ ipcMain.on('get-settings', (event) => {
 });
 
 ipcMain.on('save-settings', (event, data) => {
-    configEnMemoria = { ...configEnMemoria, ...data };
+    configEnMemoria = {
+        ...configEnMemoria,
+        ...data
+    };
+
     store.set('userSettings', configEnMemoria);
 
     if (!data.killSwitch) {
         try {
-            spawn('netsh', ['advfirewall', 'firewall', 'delete', 'rule', 'name=Arrow_KS_Block'], { windowsHide: true });
+            spawn('netsh', [
+                'advfirewall',
+                'firewall',
+                'delete',
+                'rule',
+                'name=Arrow_KS_Block'
+            ], { windowsHide: true });
         } catch (e) {}
     }
 });
@@ -1043,12 +1217,19 @@ ipcMain.on('minimizar-ventana', () => {
 
 function createTray() {
     tray = new Tray(
-        nativeImage.createFromPath(path.join(__dirname, 'icon.png')).resize({ width: 24 })
+        nativeImage.createFromPath(path.join(__dirname, 'icon.png')).resize({
+            width: 24
+        })
     );
 
     tray.setContextMenu(Menu.buildFromTemplate([
-        { label: 'Mostrar Arrow VPN', click: () => mainWindow.show() },
-        { type: 'separator' },
+        {
+            label: 'Mostrar Arrow VPN',
+            click: () => mainWindow.show()
+        },
+        {
+            type: 'separator'
+        },
         {
             label: 'Salir por completo',
             click: () => {
@@ -1062,7 +1243,7 @@ function createTray() {
 }
 
 // ==========================================
-// RECEPTORES DEL SISTEMA OTA (CON INTERACCIÓN DEL USUARIO)
+// RECEPTORES DEL SISTEMA OTA
 // ==========================================
 autoUpdater.on('update-available', () => {
     if (mainWindow) {
@@ -1090,6 +1271,7 @@ autoUpdater.on('update-downloaded', () => {
             try {
                 await detenerSingbox();
             } catch (e) {}
+
             autoUpdater.quitAndInstall(false, true);
         }
     });
@@ -1097,24 +1279,50 @@ autoUpdater.on('update-downloaded', () => {
 
 autoUpdater.on('error', (err) => {
     console.log('Error silencioso en OTA:', err.message);
-    registrarErrorApp('auto-updater', err.stack || err.message || String(err));
+
+    registrarErrorApp(
+        'auto-updater',
+        err.stack || err.message || String(err)
+    );
 });
 
 function limpiarAccesosDirectosFantasma() {
     try {
-        const userStartMenu = path.join(process.env.APPDATA || '', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Arrow VPN.lnk');
-        const userMenuFolder = path.join(process.env.APPDATA || '', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Arrow VPN');
+        const userStartMenu = path.join(
+            process.env.APPDATA || '',
+            'Microsoft',
+            'Windows',
+            'Start Menu',
+            'Programs',
+            'Arrow VPN.lnk'
+        );
+
+        const userMenuFolder = path.join(
+            process.env.APPDATA || '',
+            'Microsoft',
+            'Windows',
+            'Start Menu',
+            'Programs',
+            'Arrow VPN'
+        );
 
         if (fs.existsSync(userStartMenu)) {
             fs.unlinkSync(userStartMenu);
         }
 
         if (fs.existsSync(userMenuFolder)) {
-            fs.rmSync(userMenuFolder, { recursive: true, force: true });
+            fs.rmSync(userMenuFolder, {
+                recursive: true,
+                force: true
+            });
         }
     } catch (e) {
         console.log("Error limpiando accesos directos:", e.message);
-        registrarErrorApp('limpiar-accesos-directos', e.stack || e.message || String(e));
+
+        registrarErrorApp(
+            'limpiar-accesos-directos',
+            e.stack || e.message || String(e)
+        );
     }
 }
 
@@ -1124,7 +1332,10 @@ app.whenReady().then(async () => {
     try {
         await detenerSingbox();
     } catch (e) {
-        registrarErrorApp('startup-detener-singbox', e.stack || e.message || String(e));
+        registrarErrorApp(
+            'startup-detener-singbox',
+            e.stack || e.message || String(e)
+        );
     }
 
     limpiarProxySistema();
@@ -1138,7 +1349,11 @@ app.whenReady().then(async () => {
             await autoUpdater.checkForUpdatesAndNotify();
         } catch (err) {
             console.log('Fallo al iniciar el servicio OTA:', err.message);
-            registrarErrorApp('startup-ota', err.stack || err.message || String(err));
+
+            registrarErrorApp(
+                'startup-ota',
+                err.stack || err.message || String(err)
+            );
         }
     }, 3000);
 });
