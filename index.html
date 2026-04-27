@@ -20,11 +20,11 @@
     <div id="pantalla-login" class="pantalla-login">
         <div class="login-box">
             <h2>Arrow VPN</h2>
-            <p>Ingresa tus credenciales Stealth</p>
-            <input type="text" id="login-uuid" class="login-input" placeholder="ID de Usuario (UUID)" spellcheck="false">
-            <input type="password" id="login-pass" class="login-input" placeholder="Contraseña">
+            <p data-i18n="login-sub">Ingresa tus credenciales Stealth</p>
+            <input type="text" id="login-uuid" class="login-input" placeholder="ID de Usuario (UUID)" data-i18n="login-uuid-ph" spellcheck="false">
+            <input type="password" id="login-pass" class="login-input" placeholder="Contraseña" data-i18n="login-pass-ph">
             <div id="login-error" class="login-error-text"></div>
-            <button id="btn-login-submit" class="btn-login">Verificar Acceso</button>
+            <button id="btn-login-submit" class="btn-login" data-i18n="btn-login">Verificar Acceso</button>
         </div>
     </div>
 
@@ -39,7 +39,7 @@
         <button class="mode-btn" id="btn-modo-proxy" title="Ideal para redes bloqueadas o Wi-Fi público estricto">PROXY</button>
     </div>
 
-    <div class="status-text">Protección Inactiva</div>
+    <div class="status-text" id="main-status-text" data-i18n="status-inactivo">Protección Inactiva</div>
 
     <div class="btn-maestro-container">
         <button class="btn-conectar" id="btn-conectar">
@@ -48,16 +48,16 @@
                     <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-84 31.5-156.5T197-763l56 56q-44 44-68.5 102T160-480q0 134 93 227t227 93q134 0 227-93t93-227q0-67-24.5-125T707-707l56-56q54 54 85.5 126.5T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-400v-400h80v400h-80Z"/>
                 </svg>
             </div>
-            <span>CONECTAR</span>
+            <span id="btn-conectar-text" data-i18n="btn-conectar">CONECTAR</span>
         </button>
     </div>
 
     <div class="server-menu" id="menu-servidores"></div>
 
     <div class="bottom-container">
-        <div class="bottom-label">Ubicación Actual</div>
+        <div class="bottom-label" data-i18n="ubi-actual">Ubicación Actual</div>
         <button class="btn-servidor" id="btn-abrir-servidores">
-            <div class="server-info" id="info-servidor-actual">
+            <div class="server-info" id="info-servidor-actual" data-i18n="cargando-nodos">
                 Cargando Nodos...
             </div>
             <span>▼</span>
@@ -67,66 +67,80 @@
     <div class="overlay" id="overlay-menus"></div>
 
     <div class="panel-flotante" id="panel-soporte">
-        <h3 class="panel-title">Soporte Técnico</h3>
+        <h3 class="panel-title" data-i18n="panel-soporte-tit">Soporte Técnico</h3>
         <div class="support-item" style="cursor: default;">
-            <span class="support-label">Versión de App</span>
+            <span class="support-label" data-i18n="lbl-version">Versión de App</span>
             <span class="support-value" id="app-version-text" style="color: #95a5a6;">Cargando...</span>
         </div>
         <div class="support-item" data-clipboard="05900ca5fcec8fe58b509961f5ed9c658a876c1308b9bfdd69e14effbd1ed13a0e">
-            <span class="support-label">ID de Sesión</span>
+            <span class="support-label" data-i18n="lbl-sesion">ID de Sesión</span>
             <span class="support-value" style="color: #7f8c8d;">05900ca5fcec8fe58b509961f5ed9c658a876c1308b9bfdd69e14effbd1ed13a0e</span>
         </div>
         <div class="support-item" data-clipboard="support@arrow-x.org">
-            <span class="support-label">Centro de Ayuda</span>
+            <span class="support-label" data-i18n="lbl-centro">Centro de Ayuda</span>
             <span class="support-value" style="color: #3498db;">support@arrow-x.org</span>
         </div>
-        <button class="panel-btn-cerrar" id="btn-cerrar-soporte">Cerrar</button>
+        <button class="panel-btn-cerrar" id="btn-cerrar-soporte" data-i18n="btn-cerrar">Cerrar</button>
     </div>
 
     <div class="panel-flotante" id="panel-cuenta">
-        <h3 class="panel-title">Ajustes</h3>
+        <h3 class="panel-title" data-i18n="panel-ajustes-tit">Ajustes</h3>
 
-        <button id="btn-abrir-credenciales" class="btn-credenciales">Mis Credenciales</button>
-
-        <button id="btn-cerrar-sesion" class="btn-logout">Cerrar Sesión</button>
+        <button id="btn-abrir-credenciales" class="btn-credenciales" data-i18n="btn-cred">Mis Credenciales</button>
+        <button id="btn-cerrar-sesion" class="btn-logout" data-i18n="btn-logout">Cerrar Sesión</button>
 
         <div class="setting-group" style="margin-bottom: 10px;">
-            <span class="setting-label-main">General</span>
+            <span class="setting-label-main" data-i18n="lbl-gen">General</span>
+
+            <div class="toggle-row" style="overflow: visible;">
+                <span class="setting-label" data-i18n="lbl-idioma">Idioma / Language</span>
+                <div class="custom-select" id="custom-idioma-select">
+                    <div class="select-trigger">
+                        <span id="select-trigger-text">Español</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="select-options">
+                        <div class="option selected" data-value="es">Español</div>
+                        <div class="option" data-value="en">English</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="toggle-row">
-                <span class="setting-label">Minimizar a la bandeja</span>
+                <span class="setting-label" data-i18n="lbl-tray">Minimizar a la bandeja</span>
                 <label class="switch"><input type="checkbox" id="toggle-tray"><span class="slider"></span></label>
             </div>
             <div class="toggle-row">
-                <span class="setting-label">Conexión automática</span>
+                <span class="setting-label" data-i18n="lbl-auto">Conexión automática</span>
                 <label class="switch"><input type="checkbox" id="toggle-auto"><span class="slider"></span></label>
             </div>
         </div>
         <div class="setting-group" style="margin-bottom: 20px;">
-            <span class="setting-label-main">Seguridad Avanzada</span>
+            <span class="setting-label-main" data-i18n="lbl-sec">Seguridad Avanzada</span>
             <div class="toggle-row">
-                <span class="setting-label" style="color: #ff7675;">Kill Switch (Bloqueo)</span>
+                <span class="setting-label" style="color: #ff7675;" data-i18n="lbl-kill">Kill Switch (Bloqueo)</span>
                 <label class="switch"><input type="checkbox" id="toggle-killswitch"><span class="slider killswitch-slider"></span></label>
             </div>
         </div>
         <div class="panel-botones">
-            <button class="panel-btn-cerrar" id="btn-cerrar-cuenta">Volver</button>
+            <button class="panel-btn-cerrar" id="btn-cerrar-cuenta" data-i18n="btn-volver">Volver</button>
         </div>
     </div>
 
     <div class="panel-flotante" id="panel-credenciales">
-        <h3 class="panel-title">Mis Credenciales</h3>
-        <p class="credenciales-subtitle">Haz clic para copiar al portapapeles</p>
+        <h3 class="panel-title" data-i18n="panel-cred-tit">Mis Credenciales</h3>
+        <p class="credenciales-subtitle" data-i18n="cred-sub">Haz clic para copiar al portapapeles</p>
 
-        <button id="btn-copiar-sub" class="btn-copiar-sub">Copiar Suscripción General</button>
+        <button id="btn-copiar-sub" class="btn-copiar-sub" data-i18n="btn-copiar-sub">Copiar Suscripción General</button>
 
         <div class="setting-group credenciales-group">
-            <span class="setting-label-main">Nodos VLESS (Individual)</span>
+            <span class="setting-label-main" data-i18n="lbl-nodos-ind">Nodos VLESS (Individual)</span>
             <div id="lista-vless-nodos" class="vless-list-container">
             </div>
         </div>
 
         <div class="panel-botones">
-            <button class="panel-btn-cerrar" id="btn-volver-ajustes">Volver a Ajustes</button>
+            <button class="panel-btn-cerrar" id="btn-volver-ajustes" data-i18n="btn-volver-ajustes">Volver a Ajustes</button>
         </div>
     </div>
 
@@ -134,6 +148,149 @@
 
 </div>
 <script>
+    // ==========================================
+    // DICCIONARIO BILINGÜE
+    // ==========================================
+    const i18n = {
+        es: {
+            "login-sub": "Ingresa tus credenciales Stealth",
+            "login-uuid-ph": "ID de Usuario (UUID)",
+            "login-pass-ph": "Contraseña",
+            "btn-login": "Verificar Acceso",
+            "status-inactivo": "Protección Inactiva",
+            "btn-conectar": "CONECTAR",
+            "btn-desconectar": "DESCONECTAR",
+            "ubi-actual": "Ubicación Actual",
+            "cargando-nodos": "Cargando Nodos...",
+            "panel-soporte-tit": "Soporte Técnico",
+            "lbl-version": "Versión de App",
+            "lbl-sesion": "ID de Sesión",
+            "lbl-centro": "Centro de Ayuda",
+            "btn-cerrar": "Cerrar",
+            "panel-ajustes-tit": "Ajustes",
+            "btn-cred": "Mis Credenciales",
+            "btn-logout": "Cerrar Sesión",
+            "lbl-gen": "General",
+            "lbl-idioma": "Idioma / Language",
+            "lbl-tray": "Minimizar a la bandeja",
+            "lbl-auto": "Conexión automática",
+            "lbl-sec": "Seguridad Avanzada",
+            "lbl-kill": "Kill Switch (Bloqueo)",
+            "btn-volver": "Volver",
+            "panel-cred-tit": "Mis Credenciales",
+            "cred-sub": "Haz clic para copiar al portapapeles",
+            "btn-copiar-sub": "Copiar Suscripción General",
+            "lbl-nodos-ind": "Nodos VLESS (Individual)",
+            "btn-volver-ajustes": "Volver a Ajustes",
+            "msg-ajustes": "✓ Ajustes actualizados",
+            "msg-copiado": "✓ Copiado al portapapeles",
+            "msg-error-nodo": "⚠️ Error: No hay servidor seleccionado",
+            "msg-vpn-activa": "VPN Activa",
+            "msg-proxy-activo": "Proxy Activo",
+            "msg-conectando": "CONECTANDO...",
+            "msg-apagando": "APAGANDO...",
+            "msg-sesion-iniciada": "✓ Sesión iniciada",
+            "msg-desconectado": "Desconectado"
+        },
+        en: {
+            "login-sub": "Enter your Stealth credentials",
+            "login-uuid-ph": "User ID (UUID)",
+            "login-pass-ph": "Password",
+            "btn-login": "Verify Access",
+            "status-inactivo": "Protection Inactive",
+            "btn-conectar": "CONNECT",
+            "btn-desconectar": "DISCONNECT",
+            "ubi-actual": "Current Location",
+            "cargando-nodos": "Loading Nodes...",
+            "panel-soporte-tit": "Technical Support",
+            "lbl-version": "App Version",
+            "lbl-sesion": "Session ID",
+            "lbl-centro": "Help Center",
+            "btn-cerrar": "Close",
+            "panel-ajustes-tit": "Settings",
+            "btn-cred": "My Credentials",
+            "btn-logout": "Log Out",
+            "lbl-gen": "General",
+            "lbl-idioma": "Language / Idioma",
+            "lbl-tray": "Minimize to tray",
+            "lbl-auto": "Auto-connect",
+            "lbl-sec": "Advanced Security",
+            "lbl-kill": "Kill Switch (Block)",
+            "btn-volver": "Back",
+            "panel-cred-tit": "My Credentials",
+            "cred-sub": "Click to copy to clipboard",
+            "btn-copiar-sub": "Copy General Subscription",
+            "lbl-nodos-ind": "VLESS Nodes (Individual)",
+            "btn-volver-ajustes": "Back to Settings",
+            "msg-ajustes": "✓ Settings updated",
+            "msg-copiado": "✓ Copied to clipboard",
+            "msg-error-nodo": "⚠️ Error: No server selected",
+            "msg-vpn-activa": "VPN Active",
+            "msg-proxy-activo": "Proxy Active",
+            "msg-conectando": "CONNECTING...",
+            "msg-apagando": "DISCONNECTING...",
+            "msg-sesion-iniciada": "✓ Logged in successfully",
+            "msg-desconectado": "Disconnected"
+        }
+    };
+
+    let currentLangValue = 'es';
+
+    // ==========================================
+    // TRADUCTOR AUTOMÁTICO DE PAÍSES (Definitivo)
+    // ==========================================
+    function obtenerNombrePaisTraducido(codigoIso, nombreOriginalBackend) {
+        // Fallback si no viene el código ISO
+        if (!codigoIso || codigoIso.toUpperCase() === "UN") return nombreOriginalBackend;
+
+        try {
+            const traductor = new Intl.DisplayNames([currentLangValue], { type: 'region' });
+            let nombreTraducido = traductor.of(codigoIso.toUpperCase());
+
+            // Ajuste estético opcional para USA
+            if (codigoIso.toUpperCase() === 'US') return currentLangValue === 'es' ? 'EE. UU.' : 'USA';
+
+            // Primera letra mayúscula
+            return nombreTraducido.charAt(0).toUpperCase() + nombreTraducido.slice(1);
+        } catch (e) {
+            return nombreOriginalBackend;
+        }
+    }
+
+    function cambiarIdiomaUI(lang) {
+        currentLangValue = lang;
+        const textos = i18n[lang];
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (textos[key]) {
+                if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
+                    el.placeholder = textos[key];
+                } else {
+                    el.innerText = textos[key];
+                }
+            }
+        });
+
+        if(estaConectado) {
+            btnTexto.innerText = textos['btn-desconectar'];
+            statusTextTop.innerText = modoConexionActual === 'vpn' ? textos['msg-vpn-activa'] : textos['msg-proxy-activo'];
+        } else if(!estaConectando && !estaDesconectando) {
+            btnTexto.innerText = textos['btn-conectar'];
+            statusTextTop.innerText = textos['status-inactivo'];
+        }
+
+        // Forzar actualización de la UI de servidores si ya están cargados
+        if (Object.keys(servidoresDisponibles).length > 0) {
+            renderizarMenuServidores();
+            actualizarBotonServidorUI();
+            const panelCredenciales = document.getElementById('panel-credenciales');
+            if (panelCredenciales.classList.contains('abierto')) {
+                renderizarListaVless();
+            }
+        }
+    }
+
     let estaConectado = false;
     let estaConectando = false;
     let estaDesconectando = false;
@@ -145,8 +302,6 @@
     let datosRadar = {};
     let isPinging = false;
     let radarInterval = null;
-
-    // VARIABLE AÑADIDA PARA CONTROLAR EL BUG DEL BOTÓN
     let timeoutConexionId = null;
 
     const pantallaLogin = document.getElementById('pantalla-login');
@@ -165,19 +320,60 @@
     const btnModoVpn = document.getElementById('btn-modo-vpn');
     const btnModoProxy = document.getElementById('btn-modo-proxy');
 
+    const btnConectar = document.getElementById('btn-conectar');
+    const statusTextTop = document.getElementById('main-status-text');
+    const btnTexto = document.getElementById('btn-conectar-text');
+
+    // ==========================================
+    // LÓGICA DEL CUSTOM SELECT
+    // ==========================================
+    const customSelect = document.getElementById('custom-idioma-select');
+    const trigger = customSelect.querySelector('.select-trigger');
+    const triggerText = document.getElementById('select-trigger-text');
+    const options = customSelect.querySelectorAll('.option');
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        customSelect.classList.toggle('open');
+    });
+
+    options.forEach(opt => {
+        opt.addEventListener('click', () => {
+            const val = opt.getAttribute('data-value');
+            const txt = opt.innerText;
+
+            triggerText.innerText = txt;
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            customSelect.classList.remove('open');
+
+            if (currentLangValue !== val) {
+                cambiarIdiomaUI(val);
+                aplicarGuardado(true);
+            }
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove('open');
+        }
+    });
+
     function aplicarGuardado(mostrarAviso = true) {
         window.apiVPN.enviar('save-settings', {
             tray: toggleTray.checked,
             autoConnect: toggleAuto.checked,
             killSwitch: toggleKillswitch.checked,
-            connectionMode: modoConexionActual
+            connectionMode: modoConexionActual,
+            idioma: currentLangValue
         });
-        if (mostrarAviso) mostrarMensaje("✓ Ajustes actualizados");
+        if (mostrarAviso) mostrarMensaje(i18n[currentLangValue]['msg-ajustes']);
     }
 
     function actualizarModoVisual(modo, guardar = true) {
         if (estaConectado || estaConectando) {
-            mostrarMensaje("⚠️ Desconéctate para cambiar de modo", true);
+            mostrarMensaje("⚠️ " + (currentLangValue === 'es' ? "Desconéctate para cambiar de modo" : "Disconnect to switch modes"), true);
             return;
         }
         modoConexionActual = modo;
@@ -192,13 +388,11 @@
     function gestionarRadar(activar) {
         if (activar) {
             if (!radarInterval) {
-                console.log("📡 Radar Activado");
                 consultarRadar();
                 radarInterval = setInterval(consultarRadar, 10000);
             }
         } else {
             if (radarInterval) {
-                console.log("💤 Radar Durmiendo");
                 clearInterval(radarInterval);
                 radarInterval = null;
             }
@@ -207,18 +401,27 @@
 
     function renderizarMenuServidores() {
         const claseSpin = isPinging ? 'spin-anim' : '';
+        const txtLatencia = currentLangValue === 'es' ? "Latencia en vivo" : "Live Latency";
 
         menuServidores.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; padding: 4px 5px 0 5px;">
-                <span style="font-size: 11px; color: #7f8c8d; font-weight: 600; text-transform: uppercase;">Latencia en vivo</span>
-                <button id="btn-recargar-ping" class="btn-recargar ${claseSpin}" title="Actualizar Pings">
+                <span style="font-size: 11px; color: #7f8c8d; font-weight: 600; text-transform: uppercase;">${txtLatencia}</span>
+                <button id="btn-recargar-ping" class="btn-recargar ${claseSpin}" title="Ping">
                     <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#7f8c8d"><path d="M480-160q-133 0-226.5-93.5T160-480q0-133 93.5-226.5T480-800q85 0 149 34.5T740-671v-129h80v254H566v-80h130q-42-61-101.5-98T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q81 0 143-48t90-122h82q-32 108-115 179t-200 71Z"/></svg>
                 </button>
             </div>
         `;
 
         let llavesActivas = Object.keys(servidoresDisponibles);
-        llavesActivas.sort((a, b) => servidoresDisponibles[a].nombre.localeCompare(servidoresDisponibles[b].nombre));
+
+        // Ordenar alfabéticamente respetando el idioma actual usando el ISO
+        llavesActivas.sort((a, b) => {
+            const isoA = servidoresDisponibles[a].iso || "UN";
+            const isoB = servidoresDisponibles[b].iso || "UN";
+            const nomA = obtenerNombrePaisTraducido(isoA, servidoresDisponibles[a].nombre);
+            const nomB = obtenerNombrePaisTraducido(isoB, servidoresDisponibles[b].nombre);
+            return nomA.localeCompare(nomB);
+        });
 
         if (!servidorSeleccionado || !servidoresDisponibles[servidorSeleccionado]) {
             servidorSeleccionado = llavesActivas.length > 0 ? llavesActivas[0] : null;
@@ -228,33 +431,36 @@
 
         llavesActivas.forEach(idPais => {
             const dataServidor = servidoresDisponibles[idPais];
-            const btn = document.createElement('button');
-            const telemetria = datosRadar[idPais] || { estado: "Consultando...", ping: 0 };
+            const telemetria = datosRadar[idPais] || { estado: "...", ping: 0 };
+
+            const isoCode = dataServidor.iso || "UN";
+            const nombreTraducido = obtenerNombrePaisTraducido(isoCode, dataServidor.nombre);
 
             let claseColor = 'dot-mantenimiento';
-            let textoPing = telemetria.ping > 0 ? `${telemetria.ping} ms` : "Calculando...";
+            let textoPing = telemetria.ping > 0 ? `${telemetria.ping} ms` : "...";
             let estaDeshabilitado = false;
 
             if (telemetria.ping > 0 && telemetria.ping <= 199) claseColor = 'dot-activo';
             else if (telemetria.ping >= 200 && telemetria.ping <= 800) claseColor = 'dot-mantenimiento';
             else if (telemetria.ping > 800 || telemetria.ping === -1 || ["Caído", "Error URL", "Timeout"].includes(telemetria.estado)) {
                 claseColor = 'dot-apagado';
-                textoPing = "Fuera de servicio";
+                textoPing = currentLangValue === 'es' ? "Fuera de servicio" : "Offline";
                 estaDeshabilitado = true;
             }
 
+            const btn = document.createElement('button');
             btn.className = `server-option ${estaDeshabilitado ? 'disabled' : ''}`;
             btn.innerHTML = `
                 <div class="server-info">
                     <img src="${dataServidor.bandera}" class="bandera" alt="${idPais}">
                     <div style="display: flex; flex-direction: column; text-align: left; margin-left: 5px;">
-                        <span>${dataServidor.nombre}</span>
+                        <span>${nombreTraducido}</span>
                         <span style="font-size: 10px; color: ${estaDeshabilitado ? '#e74c3c' : '#7f8c8d'}; margin-top: 2px; font-weight: normal;">
                             ${textoPing}
                         </span>
                     </div>
                 </div>
-                <div class="status-dot ${claseColor}" title="${telemetria.estado}"></div>
+                <div class="status-dot ${claseColor}"></div>
             `;
 
             if (!estaDeshabilitado) {
@@ -272,7 +478,7 @@
             e.stopPropagation();
             if (isPinging) return;
             isPinging = true;
-            Object.keys(servidoresDisponibles).forEach(id => datosRadar[id] = { estado: "Calculando...", ping: 0 });
+            Object.keys(servidoresDisponibles).forEach(id => datosRadar[id] = { estado: "...", ping: 0 });
             renderizarMenuServidores();
             window.apiVPN.enviar('ping-servers', servidoresDisponibles);
         });
@@ -283,8 +489,11 @@
     function actualizarBotonServidorUI() {
         if (!servidorSeleccionado || !servidoresDisponibles[servidorSeleccionado]) return;
         const dataServidor = servidoresDisponibles[servidorSeleccionado];
+        const isoCode = dataServidor.iso || "UN";
+        const nombreTraducido = obtenerNombrePaisTraducido(isoCode, dataServidor.nombre);
+
         document.getElementById('info-servidor-actual').innerHTML = `
-            <img src="${dataServidor.bandera}" class="bandera" alt="${servidorSeleccionado}"> ${dataServidor.nombre}
+            <img src="${dataServidor.bandera}" class="bandera" alt="${servidorSeleccionado}"> ${nombreTraducido}
         `;
     }
 
@@ -300,7 +509,10 @@
     });
 
     btnAbrirServidores.addEventListener('click', () => {
-        if (estaConectado || estaConectando) { mostrarMensaje("⚠️ Desconéctate para cambiar de servidor", true); return; }
+        if (estaConectado || estaConectando) {
+            mostrarMensaje("⚠️ " + (currentLangValue === 'es' ? "Desconéctate para cambiar de servidor" : "Disconnect to change servers"), true);
+            return;
+        }
         const menuAbierto = menuServidores.classList.toggle('abierto');
         gestionarRadar(menuAbierto);
     });
@@ -317,26 +529,29 @@
     btnLogin.addEventListener('click', () => {
         const uuid = inputUuid.value.trim();
         const pass = inputPass.value.trim();
-        if (!uuid || !pass) { txtErrorLogin.innerText = "Ingresa todos los datos"; return; }
+        if (!uuid || !pass) {
+            txtErrorLogin.innerText = currentLangValue === 'es' ? "Ingresa todos los datos" : "Enter all data";
+            return;
+        }
         txtErrorLogin.innerText = "";
-        btnLogin.innerText = "Verificando...";
+        btnLogin.innerText = "...";
         btnLogin.classList.add('cargando');
         window.apiVPN.enviar('login-request', { uuid: uuid, password: pass });
     });
 
     window.apiVPN.recibir('login-success', (config) => {
-        btnLogin.innerText = "Verificar Acceso";
+        btnLogin.innerText = i18n[currentLangValue]['btn-login'];
         btnLogin.classList.remove('cargando');
         servidoresDisponibles = config.servidores;
         servidorSeleccionado = config.ultimoServidor || '';
         currentUserUuid = config.uuid;
         renderizarMenuServidores();
         pantallaLogin.classList.add('oculta');
-        mostrarMensaje("✓ Sesión iniciada");
+        mostrarMensaje(i18n[currentLangValue]['msg-sesion-iniciada']);
     });
 
     window.apiVPN.recibir('login-error', (msg) => {
-        btnLogin.innerText = "Verificar Acceso";
+        btnLogin.innerText = i18n[currentLangValue]['btn-login'];
         btnLogin.classList.remove('cargando');
         txtErrorLogin.innerText = msg;
     });
@@ -361,10 +576,22 @@
         toggleTray.checked = settings.tray;
         toggleAuto.checked = settings.autoConnect;
         toggleKillswitch.checked = settings.killSwitch;
+
+        if(settings.idioma) {
+            currentLangValue = settings.idioma;
+            const opt = Array.from(options).find(o => o.getAttribute('data-value') === settings.idioma);
+            if(opt) {
+                triggerText.innerText = opt.innerText;
+                options.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            }
+            cambiarIdiomaUI(settings.idioma);
+        }
+
         actualizarModoVisual(settings.connectionMode || 'vpn', false);
         if (settings.uuid && settings.password) {
             currentUserUuid = settings.uuid;
-            btnLogin.innerText = "Autenticando...";
+            btnLogin.innerText = "...";
             btnLogin.classList.add('cargando');
             window.apiVPN.enviar('login-request', { uuid: settings.uuid, password: settings.password });
         }
@@ -403,31 +630,29 @@
 
     document.querySelectorAll('.support-item[data-clipboard]').forEach(item => {
         item.addEventListener('click', () => {
-            navigator.clipboard.writeText(item.getAttribute('data-clipboard')).then(() => { mostrarMensaje("✓ Copiado al portapapeles"); });
+            navigator.clipboard.writeText(item.getAttribute('data-clipboard')).then(() => {
+                mostrarMensaje(i18n[currentLangValue]['msg-copiado']);
+            });
         });
     });
-
-    const btnConectar = document.getElementById('btn-conectar');
-    const statusTextTop = document.querySelector('.status-text');
-    const btnTexto = btnConectar.querySelector('span');
 
     btnConectar.addEventListener('click', () => {
         if (menuServidores.classList.contains('abierto')) { menuServidores.classList.remove('abierto'); gestionarRadar(false); }
         if (estaConectando || estaDesconectando) return;
         if (!estaConectado) {
-            if (!servidorSeleccionado) { mostrarMensaje("⚠️ Error: No hay servidor seleccionado", true); return; }
+            if (!servidorSeleccionado) { mostrarMensaje(i18n[currentLangValue]['msg-error-nodo'], true); return; }
             aplicarGuardado(false);
             estaConectando = true;
             toggleKillswitch.disabled = true;
             btnConectar.className = 'btn-conectar conectando';
-            btnTexto.innerText = 'CONECTANDO...';
-            statusTextTop.innerText = 'Iniciando modo ' + (modoConexionActual === 'vpn' ? 'TUN' : 'Proxy') + '...';
+            btnTexto.innerText = i18n[currentLangValue]['msg-conectando'];
+            statusTextTop.innerText = 'TUN / Proxy...';
             window.apiVPN.enviar('conectar-vpn', { vlessKey: servidoresDisponibles[servidorSeleccionado].vless, serverId: servidorSeleccionado });
         } else {
             estaDesconectando = true;
             btnConectar.className = 'btn-conectar desconectando';
-            btnTexto.innerText = 'APAGANDO...';
-            statusTextTop.innerText = 'Deteniendo servicios...';
+            btnTexto.innerText = i18n[currentLangValue]['msg-apagando'];
+            statusTextTop.innerText = '...';
             window.apiVPN.enviar('desconectar-vpn');
             setTimeout(() => { forzarDesconexionUI(); }, 1200);
         }
@@ -438,25 +663,23 @@
         toggleKillswitch.disabled = false;
         btnConectar.className = 'btn-conectar';
         statusTextTop.classList.remove('protegido');
-        btnTexto.innerText = 'CONECTAR';
-        statusTextTop.innerText = 'Protección Inactiva';
-        mostrarMensaje("Desconectado");
+        btnTexto.innerText = i18n[currentLangValue]['btn-conectar'];
+        statusTextTop.innerText = i18n[currentLangValue]['status-inactivo'];
+        mostrarMensaje(i18n[currentLangValue]['msg-desconectado']);
     }
 
-    // CORRECCIÓN APLICADA AQUÍ: Control del temporizador
     window.apiVPN.recibir('vpn-conectada-exito', () => {
         timeoutConexionId = setTimeout(() => {
-            if (!estaConectando) return; // Abortar si ya se desconectó/falló
+            if (!estaConectando) return;
             estaConectando = false; estaConectado = true;
             btnConectar.className = 'btn-conectar protegido';
             statusTextTop.classList.add('protegido');
-            btnTexto.innerText = 'DESCONECTAR';
-            statusTextTop.innerText = modoConexionActual === 'vpn' ? 'VPN Activa' : 'Proxy Activo';
-            mostrarMensaje("✓ Conexión establecida");
+            btnTexto.innerText = i18n[currentLangValue]['btn-desconectar'];
+            statusTextTop.innerText = modoConexionActual === 'vpn' ? i18n[currentLangValue]['msg-vpn-activa'] : i18n[currentLangValue]['msg-proxy-activo'];
+            mostrarMensaje(currentLangValue === 'es' ? "✓ Conexión establecida" : "✓ Connection established");
         }, 4500);
     });
 
-    // CORRECCIÓN APLICADA AQUÍ: Mata el temporizador si hay error
     window.apiVPN.recibir('error-suscripcion', (mensaje) => {
         if (timeoutConexionId) clearTimeout(timeoutConexionId);
         forzarDesconexionUI();
@@ -468,39 +691,40 @@
     document.getElementById('btn-cerrar').addEventListener('click', () => { window.apiVPN.enviar('cerrar-ventana'); });
     window.addEventListener('mousemove', () => btnMin.classList.remove('bloqueo-hover'));
 
-    // ==========================================
-    // LÓGICA DEL PANEL DE CREDENCIALES
-    // ==========================================
-    const panelCredenciales = document.getElementById('panel-credenciales');
-    const btnAbrirCredenciales = document.getElementById('btn-abrir-credenciales');
-    const btnVolverAjustes = document.getElementById('btn-volver-ajustes');
-    const btnCopiarSub = document.getElementById('btn-copiar-sub');
-
     function renderizarListaVless() {
         const contenedor = document.getElementById('lista-vless-nodos');
         contenedor.innerHTML = '';
+        const txtCopiar = currentLangValue === 'es' ? "Copiar Enlace" : "Copy Link";
 
         for (const idPais in servidoresDisponibles) {
             const data = servidoresDisponibles[idPais];
+            const isoCode = data.iso || "UN";
+            const nombreTraducido = obtenerNombrePaisTraducido(isoCode, data.nombre);
+
             const div = document.createElement('div');
             div.className = 'support-item';
             div.style.cursor = 'pointer';
             div.innerHTML = `
                 <span class="support-label">
                     <img src="${data.bandera}" class="vless-flag" alt="${idPais}">
-                    ${data.nombre}
+                    ${nombreTraducido}
                 </span>
-                <span class="support-value vless-copy-text">Copiar Enlace</span>
+                <span class="support-value vless-copy-text">${txtCopiar}</span>
             `;
 
             div.addEventListener('click', () => {
                 navigator.clipboard.writeText(data.vless).then(() => {
-                    mostrarMensaje("✓ VLESS de " + data.nombre + " copiado");
+                    mostrarMensaje("✓ " + nombreTraducido + " VLESS copied");
                 });
             });
             contenedor.appendChild(div);
         }
     }
+
+    const panelCredenciales = document.getElementById('panel-credenciales');
+    const btnAbrirCredenciales = document.getElementById('btn-abrir-credenciales');
+    const btnVolverAjustes = document.getElementById('btn-volver-ajustes');
+    const btnCopiarSub = document.getElementById('btn-copiar-sub');
 
     btnAbrirCredenciales.addEventListener('click', () => {
         panelCuenta.classList.remove('abierto');
@@ -517,7 +741,7 @@
         if(!currentUserUuid) return;
         const subLink = `https://arrow-x.org:5000/sub/${currentUserUuid}`;
         navigator.clipboard.writeText(subLink).then(() => {
-            mostrarMensaje("✓ Link de Suscripción copiado");
+            mostrarMensaje(i18n[currentLangValue]['msg-copiado']);
         });
     });
 </script>
