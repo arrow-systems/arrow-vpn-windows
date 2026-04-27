@@ -1,6 +1,6 @@
 # Arrow VPN (Windows)
 
-![Version](https://img.shields.io/badge/version-v2.0.14-blue)
+![Version](https://img.shields.io/badge/version-v2.0.16-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows-0078D6)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-stable-success)
